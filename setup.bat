@@ -1,6 +1,9 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+:: Ensure System32 is in PATH for standard Windows commands
+set "PATH=%SystemRoot%\System32;%SystemRoot%;%PATH%"
+
 echo ======================================================
 echo        AcxiomCRM Automated Windows Setup ^& Launcher
 echo ======================================================
@@ -8,10 +11,10 @@ echo.
 
 :: 1. Check Node.js
 echo [1/6] Checking Node.js installation...
-where node >nul 2>nul
+node -v >nul 2>nul
 if %errorlevel% neq 0 (
     echo [ERROR] Node.js is not found in your PATH.
-    echo Please install Node.js (v18.0.0 or later) from https://nodejs.org/
+    echo Please install Node.js from https://nodejs.org/
     pause
     exit /b 1
 )
@@ -20,7 +23,7 @@ node -v
 :: 2. Check npm
 echo.
 echo [2/6] Checking npm...
-where npm >nul 2>nul
+call npm -v >nul 2>nul
 if %errorlevel% neq 0 (
     echo [ERROR] npm is not found in your PATH.
     pause

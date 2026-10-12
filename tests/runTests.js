@@ -280,6 +280,7 @@ async function runTestSuite() {
     // 12. Acceptance Scenario 12: Audit Logging on CRM mutations
     await test('Scenario 12: CRM operations generate immutable audit log entries', async () => {
       const initialLogCount = AuditService.getLogCount();
+      const uniqueSuffix = `${Date.now()}_${Math.floor(Math.random() * 100000)}`;
       
       // Create a valid customer via API
       const newCustRes = await makeRequest({
@@ -288,8 +289,8 @@ async function runTestSuite() {
         headers: { 'Authorization': `Bearer ${adminToken}` },
         body: {
           CustomerName: 'Audit Verified Systems',
-          Email: `audit.test.${Date.now()}@acxiom.com`,
-          Phone: '9988776655',
+          Email: `audit.${uniqueSuffix}@acxiom.com`,
+          Phone: String(Math.floor(1000000000 + Math.random() * 9000000000)),
           CompanyName: 'Audit Test Corp'
         }
       });
@@ -317,11 +318,12 @@ async function runTestSuite() {
 
     // 14. Acceptance Scenario 14: Lead Conversion workflow
     await test('Scenario 14: Lead-to-Customer conversion workflow executes atomically', async () => {
+      const uniqueSuffix = `${Date.now()}_${Math.floor(Math.random() * 100000)}`;
       // 1. Create a qualified lead
       const newLeadId = Lead.create({
         LeadName: 'Conversion Candidate',
-        Email: `convert.${Date.now()}@prospect.com`,
-        Phone: '9112233445',
+        Email: `convert.${uniqueSuffix}@prospect.com`,
+        Phone: String(Math.floor(1000000000 + Math.random() * 9000000000)),
         CompanyName: 'Converted Prospect Inc',
         ExpectedValue: 120000,
         Status: 'Qualified'
@@ -344,7 +346,8 @@ async function runTestSuite() {
 
     // 15. Security: Account Lockout after 5 failed logins
     await test('Security: 5 consecutive failed logins trigger Account Lockout', async () => {
-      const testEmail = 'lockout.target@acxiomcrm.com';
+      const uniqueSuffix = `${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+      const testEmail = `lockout.${uniqueSuffix}@acxiomcrm.com`;
       User.create({
         name: 'Lockout Target',
         email: testEmail,
