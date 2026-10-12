@@ -1,0 +1,54 @@
+<div style="text-align: center; margin-bottom: 24px;">
+  <div class="brand-icon" style="width: 50px; height: 50px; margin: 0 auto 14px; font-size: 1.5rem;">
+    <i class="fa-solid fa-user-plus"></i>
+  </div>
+  <h2 style="margin: 0 0 6px; font-size: 1.5rem; font-weight: 800; color: #fff;">Create AcxiomCRM Account</h2>
+  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Register your profile to access sales tools</p>
+</div>
+
+<% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+  <div class="crm-alert crm-alert-danger" style="display: block; margin-bottom: 20px;">
+    <ul style="margin: 0; padding-left: 20px; font-size: 0.85rem;">
+      <% errors.forEach(err => { %>
+        <li><%= err %></li>
+      <% }); %>
+    </ul>
+  </div>
+<% } %>
+
+<form action="/register" method="POST" class="needs-crm-validation">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div style="margin-bottom: 16px;">
+    <label class="form-label" for="regName">Full Name</label>
+    <input type="text" id="regName" name="name" class="form-control-crm" placeholder="John Doe" value="<%= typeof data !== 'undefined' && data.name ? data.name : '' %>" required data-name="Full Name">
+  </div>
+
+  <div style="margin-bottom: 16px;">
+    <label class="form-label" for="regEmail">Email Address</label>
+    <input type="email" id="regEmail" name="email" class="form-control-crm" placeholder="john@company.com" value="<%= typeof data !== 'undefined' && data.email ? data.email : '' %>" required data-name="Email">
+  </div>
+
+  <div style="margin-bottom: 16px;">
+    <label class="form-label" for="regPassword">Password</label>
+    <input type="password" id="regPassword" name="password" class="form-control-crm" placeholder="••••••••" required data-name="Password">
+    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px; line-height: 1.4;">
+      <i class="fa-solid fa-shield-halved me-1"></i> Policy: At least 8 characters, with 1 uppercase, 1 lowercase, 1 digit, and 1 special character (@$!%*?&#).
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <label class="form-label" for="regConfirmPassword">Confirm Password</label>
+    <input type="password" id="regConfirmPassword" name="confirmPassword" class="form-control-crm" placeholder="••••••••" required data-name="Confirm Password">
+  </div>
+
+  <button type="submit" class="btn-crm btn-crm-primary" style="width: 100%; padding: 12px; font-size: 0.95rem;">
+    <i class="fa-solid fa-user-check"></i>
+    <span>Create Account</span>
+  </button>
+</form>
+
+<div style="margin-top: 24px; text-align: center; font-size: 0.85rem; color: var(--text-dim);">
+  Already registered?
+  <a href="/login" style="color: var(--primary); text-decoration: none; font-weight: 600;">Sign In</a>
+</div>

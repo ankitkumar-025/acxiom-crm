@@ -1,0 +1,145 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Sales Opportunities & Pipeline</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Deal forecasting, weighted pipeline tracking and stage progression</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="/reports/pipeline" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>Pipeline Report</span>
+      </a>
+      <a href="/opportunities/create" class="btn-crm btn-crm-primary btn-crm-sm">
+        <i class="fa-solid fa-plus"></i>
+        <span>New Opportunity</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Pipeline Top Summary Badges -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+    <div style="padding: 14px; background: rgba(17, 24, 39, 0.7); border-radius: var(--radius-md); border-left: 3px solid var(--primary);">
+      <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Active Pipeline Deals</div>
+      <div style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-top: 2px;"><%= totalCount %> Opportunities</div>
+    </div>
+    <div style="padding: 14px; background: rgba(17, 24, 39, 0.7); border-radius: var(--radius-md); border-left: 3px solid var(--info);">
+      <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Unweighted Pipeline</div>
+      <div style="font-size: 1.3rem; font-weight: 800; color: #38bdf8; margin-top: 2px;">$<%= Number(totalPipelineAmount).toLocaleString() %></div>
+    </div>
+    <div style="padding: 14px; background: rgba(17, 24, 39, 0.7); border-radius: var(--radius-md); border-left: 3px solid var(--success);">
+      <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Weighted Pipeline (Amt × Prob)</div>
+      <div style="font-size: 1.3rem; font-weight: 800; color: #34d399; margin-top: 2px;">$<%= Number(totalWeightedAmount).toLocaleString() %></div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls (Section 17.13) -->
+  <form action="/opportunities" method="GET" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 240px;">
+      <input type="text" name="search" class="form-control-crm" placeholder="Search Opportunity, Customer, or Stage..." value="<%= search %>">
+    </div>
+    <div style="width: 180px;">
+      <select name="stage" class="form-control-crm">
+        <option value="">All Pipeline Stages</option>
+        <option value="Qualification" <%= stage === 'Qualification' ? 'selected' : '' %>>Qualification</option>
+        <option value="Proposal" <%= stage === 'Proposal' ? 'selected' : '' %>>Proposal</option>
+        <option value="Negotiation" <%= stage === 'Negotiation' ? 'selected' : '' %>>Negotiation</option>
+        <option value="Won" <%= stage === 'Won' ? 'selected' : '' %>>Won</option>
+        <option value="Lost" <%= stage === 'Lost' ? 'selected' : '' %>>Lost</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-crm btn-crm-secondary">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Filter</span>
+    </button>
+    <% if (search || stage) { %>
+      <a href="/opportunities" class="btn-crm btn-crm-secondary" title="Clear Filters">
+        <i class="fa-solid fa-xmark"></i>
+      </a>
+    <% } %>
+  </form>
+
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Opportunity Name</th>
+          <th>Customer</th>
+          <th>Amount</th>
+          <th>Stage</th>
+          <th>Prob.</th>
+          <th>Weighted</th>
+          <th>Close Date</th>
+          <th>Owner</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (opportunities && opportunities.length > 0) { %>
+          <% opportunities.forEach(o => { %>
+            <tr>
+              <td>
+                <a href="/opportunities/<%= o.OpportunityId %>" style="color: #fff; font-weight: 600; text-decoration: none;">
+                  <%= o.OpportunityName %>
+                </a>
+              </td>
+              <td>
+                <a href="/customers/<%= o.CustomerId %>" style="color: var(--secondary); text-decoration: none; font-size: 0.85rem;">
+                  <%= o.CustomerName %>
+                </a>
+              </td>
+              <td><strong>$<%= Number(o.Amount).toLocaleString() %></strong></td>
+              <td>
+                <span class="user-role-badge" style="font-size: 0.75rem;">
+                  <%= o.Stage %>
+                </span>
+              </td>
+              <td style="color: var(--text-muted);"><%= o.Probability %>%</td>
+              <td style="color: #34d399; font-weight: 600;">$<%= Number(o.WeightedAmount).toLocaleString() %></td>
+              <td style="font-size: 0.85rem; color: var(--text-dim);"><%= o.ExpectedCloseDate %></td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);"><%= o.AssignedName || 'Unassigned' %></td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 6px;">
+                  <a href="/opportunities/<%= o.OpportunityId %>" class="btn-crm btn-crm-secondary btn-crm-sm" title="Details">
+                    <i class="fa-solid fa-eye"></i>
+                  </a>
+                  <a href="/opportunities/<%= o.OpportunityId %>/edit" class="btn-crm btn-crm-secondary btn-crm-sm" title="Edit">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+                  <form action="/opportunities/<%= o.OpportunityId %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Delete opportunity <%= o.OpportunityName %>?');">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-crm btn-crm-danger btn-crm-sm" title="Delete">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-dim);">
+              <i class="fa-regular fa-folder-open" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+              No opportunities found matching criteria.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if (totalPages > 1) { %>
+    <div class="crm-pagination">
+      <div style="font-size: 0.85rem; color: var(--text-dim);">
+        Showing page <strong><%= currentPage %></strong> of <strong><%= totalPages %></strong> (<%= totalCount %> total)
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <% if (currentPage > 1) { %>
+          <a href="/opportunities?page=<%= currentPage - 1 %>&search=<%= search %>&stage=<%= stage %>" class="btn-crm btn-crm-secondary btn-crm-sm">Previous</a>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+          <a href="/opportunities?page=<%= currentPage + 1 %>&search=<%= search %>&stage=<%= stage %>" class="btn-crm btn-crm-secondary btn-crm-sm">Next</a>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</div>

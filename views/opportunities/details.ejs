@@ -1,0 +1,67 @@
+<div style="margin-bottom: 20px;">
+  <a href="/opportunities" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span>Back to Opportunities</span>
+  </a>
+</div>
+
+<div class="glass-card">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0;"><%= opportunity.OpportunityName %></h2>
+        <span class="user-role-badge" style="font-size: 0.8rem;"><%= opportunity.Stage %></span>
+        <span class="badge-status <%= opportunity.Status === 'Won' ? 'badge-won' : (opportunity.Status === 'Lost' ? 'badge-lost' : 'badge-new') %>"><%= opportunity.Status %></span>
+      </div>
+      <div style="margin-top: 6px; font-size: 0.9rem; color: var(--text-muted);">
+        Account: <a href="/customers/<%= opportunity.CustomerId %>" style="color: var(--secondary); text-decoration: none; font-weight: 600;"><%= opportunity.CustomerName %></a>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <a href="/opportunities/<%= opportunity.OpportunityId %>/edit" class="btn-crm btn-crm-primary btn-crm-sm">
+        <i class="fa-solid fa-pen"></i>
+        <span>Edit Opportunity</span>
+      </a>
+      <a href="/followups/create?customerId=<%= opportunity.CustomerId %>" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-regular fa-calendar-plus"></i>
+        <span>+ Follow-Up</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Key Opportunity Financial KPIs -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 18px; background: rgba(17, 24, 39, 0.6); border-radius: var(--radius-md); margin-bottom: 24px;">
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Total Deal Amount</span>
+      <div style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-top: 2px;">
+        $<%= Number(opportunity.Amount).toLocaleString() %>
+      </div>
+    </div>
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Win Probability</span>
+      <div style="font-size: 1.4rem; font-weight: 800; color: #818cf8; margin-top: 2px;">
+        <%= opportunity.Probability %>%
+      </div>
+    </div>
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Weighted Forecast</span>
+      <div style="font-size: 1.4rem; font-weight: 800; color: #34d399; margin-top: 2px;">
+        $<%= Number(opportunity.WeightedAmount).toLocaleString() %>
+      </div>
+    </div>
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Expected Close Date</span>
+      <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 4px;">
+        <%= opportunity.ExpectedCloseDate %>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="card-title" style="margin-bottom: 10px; font-size: 1rem;">Opportunity Notes</h3>
+    <div style="padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); font-size: 0.9rem; line-height: 1.6; color: var(--text-muted);">
+      <%= opportunity.Notes || 'No notes added for this deal.' %>
+    </div>
+  </div>
+</div>

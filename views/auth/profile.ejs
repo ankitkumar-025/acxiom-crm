@@ -1,0 +1,53 @@
+<div style="max-width: 800px; margin: 0 auto;">
+  <div class="glass-card" style="margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div class="user-avatar" style="width: 64px; height: 64px; font-size: 1.6rem;">
+        <%= user.Name.charAt(0).toUpperCase() %>
+      </div>
+      <div>
+        <h2 style="margin: 0 0 6px; font-size: 1.4rem; color: #fff;"><%= user.Name %></h2>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 0.88rem; color: var(--text-muted);">
+          <span><i class="fa-regular fa-envelope me-1"></i> <%= user.Email %></span>
+          <span>&bull;</span>
+          <span class="user-role-badge"><%= user.Role %></span>
+          <span>&bull;</span>
+          <span><i class="fa-regular fa-calendar me-1"></i> Joined: <%= user.CreatedDate ? user.CreatedDate.split(' ')[0] : 'Active' %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <h3 class="card-title" style="margin-bottom: 20px;">
+      <i class="fa-solid fa-key" style="color: var(--primary);"></i>
+      <span>Change Password</span>
+    </h3>
+
+    <form action="/profile/change-password" method="POST" class="needs-crm-validation" style="max-width: 500px;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label" for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" name="currentPassword" class="form-control-crm" required data-name="Current Password">
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label" for="newPassword">New Password</label>
+        <input type="password" id="newPassword" name="newPassword" class="form-control-crm" required data-name="New Password">
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
+          Min 8 characters, uppercase, lowercase, digit, and symbol.
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="form-label" for="confirmNewPassword">Confirm New Password</label>
+        <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-control-crm" required data-name="Confirm New Password">
+      </div>
+
+      <button type="submit" class="btn-crm btn-crm-primary">
+        <i class="fa-solid fa-check"></i>
+        <span>Update Password</span>
+      </button>
+    </form>
+  </div>
+</div>

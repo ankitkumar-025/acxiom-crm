@@ -1,0 +1,86 @@
+<aside class="app-sidebar" id="appSidebar">
+  <a href="/dashboard" class="sidebar-brand">
+    <div class="brand-icon">
+      <i class="fa-solid fa-chart-line"></i>
+    </div>
+    <div class="brand-text">
+      <span class="brand-title">AcxiomCRM</span>
+      <span class="brand-subtitle">Enterprise Suite</span>
+    </div>
+  </a>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Core CRM</div>
+    
+    <a href="/dashboard" class="nav-item-link <%= currentPath === '/dashboard' ? 'active' : '' %>">
+      <i class="fa-solid fa-gauge-high"></i>
+      <span>Dashboard</span>
+    </a>
+    
+    <a href="/customers" class="nav-item-link <%= currentPath.startsWith('/customers') ? 'active' : '' %>">
+      <i class="fa-solid fa-users"></i>
+      <span>Customers</span>
+    </a>
+
+    <a href="/leads" class="nav-item-link <%= currentPath.startsWith('/leads') ? 'active' : '' %>">
+      <i class="fa-solid fa-bullseye"></i>
+      <span>Leads</span>
+    </a>
+
+    <a href="/opportunities" class="nav-item-link <%= currentPath.startsWith('/opportunities') ? 'active' : '' %>">
+      <i class="fa-solid fa-handshake"></i>
+      <span>Opportunities</span>
+    </a>
+
+    <div class="nav-section-title">Sales Operations</div>
+
+    <a href="/followups" class="nav-item-link <%= currentPath.startsWith('/followups') ? 'active' : '' %>">
+      <i class="fa-regular fa-calendar-check"></i>
+      <span>Follow-Ups</span>
+    </a>
+
+    <a href="/activities" class="nav-item-link <%= currentPath.startsWith('/activities') ? 'active' : '' %>">
+      <i class="fa-solid fa-list-check"></i>
+      <span>Activities</span>
+    </a>
+
+    <a href="/reports" class="nav-item-link <%= currentPath.startsWith('/reports') ? 'active' : '' %>">
+      <i class="fa-solid fa-file-invoice"></i>
+      <span>Reports & Analytics</span>
+    </a>
+
+    <!-- Management & Administration Sections -->
+    <% if (currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Manager')) { %>
+      <div class="nav-section-title">Governance</div>
+      
+      <a href="/audit" class="nav-item-link <%= currentPath.startsWith('/audit') ? 'active' : '' %>">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Audit Trail</span>
+      </a>
+    <% } %>
+
+    <% if (currentUser && currentUser.role === 'Admin') { %>
+      <a href="/users" class="nav-item-link <%= currentPath.startsWith('/users') ? 'active' : '' %>">
+        <i class="fa-solid fa-user-gear"></i>
+        <span>User Management</span>
+      </a>
+    <% } %>
+  </nav>
+
+  <% if (currentUser) { %>
+    <div class="sidebar-footer">
+      <div class="user-snippet">
+        <div class="user-avatar">
+          <%= currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U' %>
+        </div>
+        <div class="user-meta">
+          <div class="user-name"><%= currentUser.name %></div>
+          <span class="user-role-badge"><%= currentUser.role %></span>
+        </div>
+        <a href="/logout" title="Sign Out" style="color: var(--text-dim); font-size: 1.1rem; padding: 4px;">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+      </div>
+    </div>
+  <% } %>
+</aside>

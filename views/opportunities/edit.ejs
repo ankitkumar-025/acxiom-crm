@@ -1,0 +1,89 @@
+<div style="max-width: 900px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <a href="/opportunities/<%= opportunity.OpportunityId %>" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Opportunity</span>
+    </a>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Edit Opportunity: <%= opportunity.OpportunityName %></h2>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);"><%= opportunity.CustomerName %></p>
+      </div>
+    </div>
+
+    <form action="/opportunities/<%= opportunity.OpportunityId %>/edit" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px;">
+        <div>
+          <label class="form-label" for="OpportunityName">Opportunity Name <span class="text-danger">*</span></label>
+          <input type="text" id="OpportunityName" name="OpportunityName" class="form-control-crm" value="<%= opportunity.OpportunityName %>" required data-name="Opportunity Name">
+        </div>
+
+        <div>
+          <label class="form-label" for="CustomerId">Customer Account <span class="text-danger">*</span></label>
+          <select id="CustomerId" name="CustomerId" class="form-control-crm" required>
+            <% customers.forEach(c => { %>
+              <option value="<%= c.CustomerId %>" <%= opportunity.CustomerId == c.CustomerId ? 'selected' : '' %>>
+                <%= c.CustomerName %> (<%= c.CustomerCode %>)
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" for="Amount">Amount ($) <span class="text-danger">*</span></label>
+          <input type="number" id="Amount" name="Amount" class="form-control-crm" min="1" step="100" value="<%= opportunity.Amount %>" required data-name="Amount">
+        </div>
+
+        <div>
+          <label class="form-label" for="Probability">Probability (%) <span class="text-danger">*</span></label>
+          <input type="number" id="Probability" name="Probability" class="form-control-crm" min="0" max="100" value="<%= opportunity.Probability %>" required data-name="Probability">
+        </div>
+
+        <div>
+          <label class="form-label" for="Stage">Pipeline Stage</label>
+          <select id="Stage" name="Stage" class="form-control-crm">
+            <% ['Qualification', 'Proposal', 'Negotiation', 'Won', 'Lost'].forEach(st => { %>
+              <option value="<%= st %>" <%= opportunity.Stage === st ? 'selected' : '' %>><%= st %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" for="ExpectedCloseDate">Expected Close Date <span class="text-danger">*</span></label>
+          <input type="date" id="ExpectedCloseDate" name="ExpectedCloseDate" class="form-control-crm" value="<%= opportunity.ExpectedCloseDate %>" required data-name="Expected Close Date">
+        </div>
+
+        <% if (currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Manager')) { %>
+          <div>
+            <label class="form-label" for="AssignedTo">Assigned Owner</label>
+            <select id="AssignedTo" name="AssignedTo" class="form-control-crm">
+              <% salesUsers.forEach(u => { %>
+                <option value="<%= u.UserId %>" <%= opportunity.AssignedTo == u.UserId ? 'selected' : '' %>>
+                  <%= u.Name %> (<%= u.Email %>)
+                </option>
+              <% }); %>
+            </select>
+          </div>
+        <% } %>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="form-label" for="Notes">Notes</label>
+        <textarea id="Notes" name="Notes" rows="3" class="form-control-crm"><%= opportunity.Notes || '' %></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <a href="/opportunities/<%= opportunity.OpportunityId %>" class="btn-crm btn-crm-secondary">Cancel</a>
+        <button type="submit" class="btn-crm btn-crm-primary">
+          <i class="fa-solid fa-check"></i>
+          <span>Save Changes</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

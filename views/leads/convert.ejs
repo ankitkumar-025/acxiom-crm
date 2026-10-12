@@ -1,0 +1,65 @@
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <a href="/leads/<%= lead.LeadId %>" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Lead</span>
+    </a>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Convert Lead to Customer & Opportunity</h2>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+          Converting: <strong><%= lead.LeadName %></strong> (<%= lead.CompanyName || 'Individual' %>)
+        </p>
+      </div>
+      <span class="badge-status badge-qualified">Qualified Stage</span>
+    </div>
+
+    <div style="padding: 16px; background: rgba(99, 102, 241, 0.1); border: 1px solid var(--border-focus); border-radius: var(--radius-md); margin-bottom: 24px; font-size: 0.88rem; line-height: 1.5;">
+      <i class="fa-solid fa-circle-info text-primary me-2"></i>
+      This action will automatically create a new <strong>Customer Master</strong> account and link it to this prospect, mark the lead as <strong>Converted</strong>, and log the conversion event into the immutable Audit Log.
+    </div>
+
+    <form action="/leads/<%= lead.LeadId %>/convert" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <!-- Checkbox to create opportunity -->
+      <div style="margin-bottom: 20px; padding: 14px; background: rgba(17, 24, 39, 0.7); border-radius: var(--radius-md);">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: #fff;">
+          <input type="checkbox" name="createOpportunity" id="createOppCheck" checked style="width: 18px; height: 18px; accent-color: var(--primary);" onchange="document.getElementById('oppFields').style.display = this.checked ? 'block' : 'none';">
+          <span>Create an active Sales Opportunity simultaneously</span>
+        </label>
+      </div>
+
+      <!-- Opportunity Fields -->
+      <div id="oppFields" style="display: block; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label" for="opportunityAmount">Opportunity Amount ($) <span class="text-danger">*</span></label>
+            <input type="number" id="opportunityAmount" name="opportunityAmount" class="form-control-crm" placeholder="50000" min="1" step="1000" value="<%= lead.ExpectedValue || 50000 %>">
+          </div>
+
+          <div>
+            <label class="form-label" for="expectedCloseDate">Expected Close Date <span class="text-danger">*</span></label>
+            <input type="date" id="expectedCloseDate" name="expectedCloseDate" class="form-control-crm" value="<%= new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] %>">
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="notes">Opportunity Notes</label>
+          <textarea id="notes" name="notes" rows="2" class="form-control-crm" placeholder="Scope notes derived from lead discovery..."><%= lead.Notes || '' %></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+        <a href="/leads/<%= lead.LeadId %>" class="btn-crm btn-crm-secondary">Cancel</a>
+        <button type="submit" class="btn-crm btn-crm-primary">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          <span>Execute Lead Conversion</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

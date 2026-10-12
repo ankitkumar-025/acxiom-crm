@@ -1,0 +1,85 @@
+<div style="margin-bottom: 20px;">
+  <a href="/leads" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span>Back to Leads</span>
+  </a>
+</div>
+
+<div class="glass-card">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    <div style="display: flex; gap: 20px; align-items: center;">
+      <div style="width: 60px; height: 60px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--info), var(--primary)); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff;">
+        <i class="fa-solid fa-bullseye"></i>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0;"><%= lead.LeadName %></h2>
+          <span class="badge-status <%= lead.Status === 'Converted' ? 'badge-converted' : (lead.Status === 'Qualified' ? 'badge-qualified' : 'badge-new') %>"><%= lead.Status %></span>
+        </div>
+        <div style="display: flex; gap: 16px; margin-top: 6px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap;">
+          <span><i class="fa-solid fa-barcode me-1"></i> <%= lead.LeadCode %></span>
+          <% if (lead.CompanyName) { %>
+            <span><i class="fa-solid fa-building me-1"></i> <%= lead.CompanyName %></span>
+          <% } %>
+          <span><i class="fa-regular fa-envelope me-1"></i> <%= lead.Email %></span>
+          <span><i class="fa-solid fa-phone me-1"></i> <%= lead.Phone %></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <% if (lead.Status !== 'Converted') { %>
+        <a href="/leads/<%= lead.LeadId %>/convert" class="btn-crm btn-crm-primary btn-crm-sm">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          <span>Convert Lead</span>
+        </a>
+      <% } else { %>
+        <span class="btn-crm btn-crm-secondary btn-crm-sm" style="cursor: default; opacity: 0.8;">
+          <i class="fa-solid fa-check-double text-success"></i> Converted
+        </span>
+      <% } %>
+      <a href="/followups/create?leadId=<%= lead.LeadId %>" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-regular fa-calendar-plus"></i>
+        <span>Schedule Follow-Up</span>
+      </a>
+      <a href="/leads/<%= lead.LeadId %>/edit" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-solid fa-pen"></i>
+        <span>Edit</span>
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 18px; background: rgba(17, 24, 39, 0.6); border-radius: var(--radius-md); margin-bottom: 24px;">
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Estimated Deal Value</span>
+      <div style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 2px;">
+        $<%= Number(lead.ExpectedValue).toLocaleString() %>
+      </div>
+    </div>
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Lead Source</span>
+      <div style="font-size: 1rem; font-weight: 600; color: var(--secondary); margin-top: 2px;">
+        <%= lead.Source %>
+      </div>
+    </div>
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Priority</span>
+      <div style="font-size: 1rem; font-weight: 600; color: #fff; margin-top: 2px;">
+        <%= lead.Priority %>
+      </div>
+    </div>
+    <div>
+      <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Assigned Representative</span>
+      <div style="font-size: 1rem; font-weight: 600; color: #fff; margin-top: 2px;">
+        <%= lead.AssignedName || 'Unassigned' %>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="card-title" style="margin-bottom: 10px; font-size: 1rem;">Discovery & Requirement Notes</h3>
+    <div style="padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); font-size: 0.9rem; line-height: 1.6; color: var(--text-muted);">
+      <%= lead.Notes || 'No notes provided for this lead.' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'AcxiomCRM Enterprise' %></title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Design System -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Role-Based Navigation Sidebar -->
+    <%- include('../partials/sidebar') %>
+
+    <!-- Main Application Shell -->
+    <main class="app-main">
+      <!-- Top Navigation Header -->
+      <%- include('../partials/navbar') %>
+
+      <!-- Dynamic Page Content -->
+      <div class="page-content">
+        <%- include('../partials/alerts') %>
+        <%- body %>
+      </div>
+
+      <!-- Footer -->
+      <%- include('../partials/footer') %>
+    </main>
+  </div>
+
+  <!-- Client Validation Script -->
+  <script src="/js/validation.js"></script>
+  <script src="/js/charts.js"></script>
+</body>
+</html>

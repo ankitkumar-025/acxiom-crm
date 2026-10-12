@@ -1,0 +1,20 @@
+<div style="max-width: 600px; margin: 60px auto; text-align: center;">
+  <div class="glass-card" style="padding: 40px;">
+    <div style="font-size: 3.5rem; color: #f87171; margin-bottom: 16px;">
+      <i class="fa-solid fa-server"></i>
+    </div>
+    <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0 0 10px;">500 Internal Error</h2>
+    <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin: 0 0 24px;">
+      An unexpected server error occurred while processing your request. Please try again or notify your system administrator.
+    </p>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.8rem; color: #f87171; margin-bottom: 20px; text-align: left;">
+        <%= error %>
+      </div>
+    <% } %>
+    <a href="/dashboard" class="btn-crm btn-crm-primary">
+      <i class="fa-solid fa-house"></i>
+      <span>Return to Dashboard</span>
+    </a>
+  </div>
+</div>

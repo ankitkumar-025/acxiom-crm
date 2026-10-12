@@ -1,0 +1,71 @@
+<div style="text-align: center; margin-bottom: 28px;">
+  <div class="brand-icon" style="width: 54px; height: 54px; margin: 0 auto 16px; font-size: 1.6rem;">
+    <i class="fa-solid fa-chart-line"></i>
+  </div>
+  <h2 style="margin: 0 0 6px; font-size: 1.6rem; font-weight: 800; color: #fff;">AcxiomCRM</h2>
+  <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">Sign in to access your sales workspace</p>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="crm-alert crm-alert-danger" style="margin-bottom: 20px;">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <div><%= error %></div>
+  </div>
+<% } %>
+
+<form action="/login" method="POST" class="needs-crm-validation">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <input type="hidden" name="returnUrl" value="<%= returnUrl %>">
+
+  <div style="margin-bottom: 18px;">
+    <label class="form-label" for="loginEmail">Email Address</label>
+    <div style="position: relative;">
+      <input type="email" id="loginEmail" name="email" class="form-control-crm" placeholder="user@acxiomcrm.com" required data-name="Email">
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <label class="form-label" for="loginPassword" style="margin-bottom: 0;">Password</label>
+      <span style="font-size: 0.75rem; color: var(--text-dim);">Min 8 characters</span>
+    </div>
+    <div style="position: relative;">
+      <input type="password" id="loginPassword" name="password" class="form-control-crm" placeholder="••••••••" required data-name="Password">
+    </div>
+  </div>
+
+  <button type="submit" class="btn-crm btn-crm-primary" style="width: 100%; padding: 12px; font-size: 0.95rem;">
+    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+    <span>Sign In to Dashboard</span>
+  </button>
+</form>
+
+<!-- Demo Credentials Helper for Quick Evaluation -->
+<div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-subtle);">
+  <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 10px; text-align: center;">
+    Quick Login Demo Accounts (Pre-Seeded)
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+    <button type="button" class="btn-crm btn-crm-secondary btn-crm-sm" onclick="setCreds('admin@acxiomcrm.com', 'Admin@123')">
+      Admin
+    </button>
+    <button type="button" class="btn-crm btn-crm-secondary btn-crm-sm" onclick="setCreds('manager@acxiomcrm.com', 'Manager@123')">
+      Manager
+    </button>
+    <button type="button" class="btn-crm btn-crm-secondary btn-crm-sm" onclick="setCreds('sales@acxiomcrm.com', 'Sales@123')">
+      Sales Rep
+    </button>
+  </div>
+</div>
+
+<div style="margin-top: 24px; text-align: center; font-size: 0.85rem; color: var(--text-dim);">
+  Don't have an account yet?
+  <a href="/register" style="color: var(--primary); text-decoration: none; font-weight: 600;">Create Account</a>
+</div>
+
+<script>
+  function setCreds(email, pass) {
+    document.getElementById('loginEmail').value = email;
+    document.getElementById('loginPassword').value = pass;
+  }
+</script>

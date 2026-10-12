@@ -1,0 +1,125 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Customer Accounts</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Manage corporate and individual customer portfolios</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="/reports/customers" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-solid fa-file-export"></i>
+        <span>Report</span>
+      </a>
+      <a href="/customers/create" class="btn-crm btn-crm-primary btn-crm-sm">
+        <i class="fa-solid fa-plus"></i>
+        <span>New Customer</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls (Section 17.13) -->
+  <form action="/customers" method="GET" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 240px; position: relative;">
+      <input type="text" name="search" class="form-control-crm" placeholder="Search by Name, Email, Phone, Company, or Code..." value="<%= search %>">
+    </div>
+    <div style="width: 160px;">
+      <select name="status" class="form-control-crm">
+        <option value="">All Statuses</option>
+        <option value="Active" <%= status === 'Active' ? 'selected' : '' %>>Active</option>
+        <option value="Inactive" <%= status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-crm btn-crm-secondary">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Filter</span>
+    </button>
+    <% if (search || status) { %>
+      <a href="/customers" class="btn-crm btn-crm-secondary" title="Clear Filters">
+        <i class="fa-solid fa-xmark"></i>
+      </a>
+    <% } %>
+  </form>
+
+  <!-- Customer Table -->
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Customer Name</th>
+          <th>Company</th>
+          <th>Contact</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Owner</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (customers && customers.length > 0) { %>
+          <% customers.forEach(c => { %>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--secondary);"><%= c.CustomerCode %></span></td>
+              <td>
+                <a href="/customers/<%= c.CustomerId %>" style="color: #fff; font-weight: 600; text-decoration: none;">
+                  <%= c.CustomerName %>
+                </a>
+              </td>
+              <td style="color: var(--text-muted);"><%= c.CompanyName || '—' %></td>
+              <td>
+                <div style="font-size: 0.85rem;"><%= c.Email %></div>
+                <div style="font-size: 0.78rem; color: var(--text-dim);"><%= c.Phone %></div>
+              </td>
+              <td style="color: var(--text-dim);"><%= c.City ? c.City + (c.State ? ', ' + c.State : '') : '—' %></td>
+              <td>
+                <span class="badge-status <%= c.Status === 'Active' ? 'badge-active' : 'badge-inactive' %>">
+                  <%= c.Status %>
+                </span>
+              </td>
+              <td style="color: var(--text-muted); font-size: 0.85rem;"><%= c.OwnerName || 'Unassigned' %></td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 6px;">
+                  <a href="/customers/<%= c.CustomerId %>" class="btn-crm btn-crm-secondary btn-crm-sm" title="View Details">
+                    <i class="fa-solid fa-eye"></i>
+                  </a>
+                  <a href="/customers/<%= c.CustomerId %>/edit" class="btn-crm btn-crm-secondary btn-crm-sm" title="Edit Customer">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+                  <form action="/customers/<%= c.CustomerId %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete <%= c.CustomerName %>?');">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-crm btn-crm-danger btn-crm-sm" title="Delete Customer">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-dim);">
+              <i class="fa-regular fa-folder-open" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+              No customer records found matching the query.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <% if (totalPages > 1) { %>
+    <div class="crm-pagination">
+      <div style="font-size: 0.85rem; color: var(--text-dim);">
+        Showing page <strong><%= currentPage %></strong> of <strong><%= totalPages %></strong> (<%= totalCount %> total)
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <% if (currentPage > 1) { %>
+          <a href="/customers?page=<%= currentPage - 1 %>&search=<%= search %>&status=<%= status %>" class="btn-crm btn-crm-secondary btn-crm-sm">Previous</a>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+          <a href="/customers?page=<%= currentPage + 1 %>&search=<%= search %>&status=<%= status %>" class="btn-crm btn-crm-secondary btn-crm-sm">Next</a>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</div>

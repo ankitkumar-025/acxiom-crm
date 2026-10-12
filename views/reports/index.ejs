@@ -1,0 +1,130 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Reporting Hub & Analytics</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Comprehensive business intelligence reports with real-time CSV exports</p>
+    </div>
+  </div>
+
+  <!-- 8 Mandatory Reports Grid (Section 4.11 & Section 11) -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+    <!-- Report 1: Customer Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: var(--primary); margin-bottom: 12px;">
+        <i class="fa-solid fa-users-viewfinder"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Customer Report</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Customer directory, active status, geographic location, account owner, and creation date.
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/customers" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/customers/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+
+    <!-- Report 2: Lead Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: var(--info); margin-bottom: 12px;">
+        <i class="fa-solid fa-filter-circle-dollar"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Lead Acquisition Report</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Lead sources, qualification progress, conversion status, estimated revenue, and assigned sales reps.
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/leads" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/leads/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+
+    <!-- Report 3: Follow-Up Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: var(--warning); margin-bottom: 12px;">
+        <i class="fa-regular fa-calendar-check"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Follow-Up & Activities</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Planned, completed, and overdue follow-up tasks, completion notes, and reschedule history.
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/followups" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/followups/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+
+    <!-- Report 4: Opportunity Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: var(--success); margin-bottom: 12px;">
+        <i class="fa-solid fa-handshake-angle"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Opportunity Forecast</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Stage-by-stage deal forecast, amount, win probabilities, and expected close milestones.
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/opportunities" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/opportunities/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+
+    <!-- Report 5: Pipeline Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: #818cf8; margin-bottom: 12px;">
+        <i class="fa-solid fa-chart-column"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Pipeline & Weighted Analysis</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Stage-wise and owner-wise pipeline volume with mathematical weighted forecasting (Amount × Prob / 100).
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/pipeline" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+      </div>
+    </div>
+
+    <!-- Report 6: Conversion Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: #a78bfa; margin-bottom: 12px;">
+        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Lead Conversion Funnel</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Analysis of leads converted vs lost across sources (Website, Referral, Cold Call, Ads).
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/conversion" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/conversion/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+
+    <!-- Report 7: User Activity Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: var(--secondary); margin-bottom: 12px;">
+        <i class="fa-solid fa-user-check"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Team Performance Report</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Aggregated action counts by sales executive (customers created, leads assigned, tasks completed).
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/user-activity" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/user-activity/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+
+    <!-- Report 8: Audit Report -->
+    <div class="kpi-card" style="padding: 22px;">
+      <div style="font-size: 1.6rem; color: #f87171; margin-bottom: 12px;">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 6px;">Audit & Security Report</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; line-height: 1.5;">
+        Security events, authentication successes/failures, account lockouts, and administrative record alterations.
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <a href="/reports/audit" class="btn-crm btn-crm-primary btn-crm-sm">View Report</a>
+        <a href="/reports/audit/export" class="btn-crm btn-crm-secondary btn-crm-sm"><i class="fa-solid fa-download"></i> CSV</a>
+      </div>
+    </div>
+  </div>
+</div>

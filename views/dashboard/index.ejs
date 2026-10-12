@@ -1,0 +1,242 @@
+<div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap: 16px;">
+  <div>
+    <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Executive Sales Performance</h2>
+    <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+      Overview for <strong><%= currentUser ? currentUser.role : 'User' %></strong> (<%= currentUser ? currentUser.name : '' %>)
+    </p>
+  </div>
+
+  <!-- Date Range Filter Form -->
+  <form action="/dashboard" method="GET" style="display: flex; align-items: center; gap: 8px;">
+    <div style="display: flex; background: rgba(17, 24, 39, 0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 4px;">
+      <a href="/dashboard?dateRange=All" class="btn-crm btn-crm-sm <%= dateRange === 'All' ? 'btn-crm-primary' : 'btn-crm-secondary' %>" style="border: none;">All Time</a>
+      <a href="/dashboard?dateRange=Today" class="btn-crm btn-crm-sm <%= dateRange === 'Today' ? 'btn-crm-primary' : 'btn-crm-secondary' %>" style="border: none;">Today</a>
+      <a href="/dashboard?dateRange=ThisWeek" class="btn-crm btn-crm-sm <%= dateRange === 'ThisWeek' ? 'btn-crm-primary' : 'btn-crm-secondary' %>" style="border: none;">This Week</a>
+      <a href="/dashboard?dateRange=ThisMonth" class="btn-crm btn-crm-sm <%= dateRange === 'ThisMonth' ? 'btn-crm-primary' : 'btn-crm-secondary' %>" style="border: none;">This Month</a>
+    </div>
+  </form>
+</div>
+
+<!-- 8 Mandatory KPI Cards (Section 17.11) -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 28px;">
+  <!-- Card 1: Total Customers -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Customers</span>
+      <div class="kpi-icon-badge kpi-icon-primary">
+        <i class="fa-solid fa-users"></i>
+      </div>
+    </div>
+    <div class="kpi-value"><%= metrics.totalCustomers %></div>
+    <div class="kpi-subtext">Active client accounts in scope</div>
+  </div>
+
+  <!-- Card 2: Total Leads -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Leads</span>
+      <div class="kpi-icon-badge kpi-icon-info">
+        <i class="fa-solid fa-bullseye"></i>
+      </div>
+    </div>
+    <div class="kpi-value"><%= metrics.totalLeads %></div>
+    <div class="kpi-subtext">Captured prospect leads</div>
+  </div>
+
+  <!-- Card 3: Open Leads -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Open Leads</span>
+      <div class="kpi-icon-badge kpi-icon-warning">
+        <i class="fa-solid fa-filter"></i>
+      </div>
+    </div>
+    <div class="kpi-value"><%= metrics.openLeads %></div>
+    <div class="kpi-subtext">Pending qualification / contact</div>
+  </div>
+
+  <!-- Card 4: Total Opportunities -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Opportunities</span>
+      <div class="kpi-icon-badge kpi-icon-primary">
+        <i class="fa-solid fa-handshake"></i>
+      </div>
+    </div>
+    <div class="kpi-value"><%= metrics.totalOpportunities %></div>
+    <div class="kpi-subtext">Deals created in CRM</div>
+  </div>
+
+  <!-- Card 5: Open Opportunities -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Open Opportunities</span>
+      <div class="kpi-icon-badge kpi-icon-info">
+        <i class="fa-solid fa-hourglass-half"></i>
+      </div>
+    </div>
+    <div class="kpi-value"><%= metrics.openOpportunities %></div>
+    <div class="kpi-subtext">Active negotiations in pipeline</div>
+  </div>
+
+  <!-- Card 6: Won Opportunities -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Won Opportunities</span>
+      <div class="kpi-icon-badge kpi-icon-success">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+    </div>
+    <div class="kpi-value" style="color: #34d399;"><%= metrics.wonOpportunities %></div>
+    <div class="kpi-subtext">Successfully closed contracts</div>
+  </div>
+
+  <!-- Card 7: Lost Opportunities -->
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Lost Opportunities</span>
+      <div class="kpi-icon-badge kpi-icon-danger">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </div>
+    </div>
+    <div class="kpi-value" style="color: #f87171;"><%= metrics.lostOpportunities %></div>
+    <div class="kpi-subtext">Disqualified or lost deals</div>
+  </div>
+
+  <!-- Card 8: Total Pipeline Value -->
+  <div class="kpi-card" style="border-color: var(--primary-glow); background: linear-gradient(145deg, rgba(99, 102, 241, 0.15), rgba(17, 24, 39, 0.8));">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Pipeline Value</span>
+      <div class="kpi-icon-badge kpi-icon-primary">
+        <i class="fa-solid fa-sack-dollar"></i>
+      </div>
+    </div>
+    <div class="kpi-value" style="color: #a5b4fc;">
+      $<%= Number(metrics.pipelineValue).toLocaleString() %>
+    </div>
+    <div class="kpi-subtext">
+      Weighted: <strong>$<%= Number(metrics.weightedPipelineValue).toLocaleString() %></strong>
+    </div>
+  </div>
+</div>
+
+<!-- 3 Mandatory Chart.js Visualizations (Section 17.12) -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; margin-bottom: 28px;">
+  <!-- Chart 1: Lead Status Breakdown -->
+  <div class="glass-card" style="margin-bottom: 0;">
+    <div class="card-header-flex">
+      <h3 class="card-title">
+        <i class="fa-solid fa-chart-pie" style="color: var(--info);"></i>
+        <span>Lead Status Breakdown</span>
+      </h3>
+      <span style="font-size: 0.75rem; color: var(--text-dim);">Doughnut Chart</span>
+    </div>
+    <div style="height: 260px; position: relative;">
+      <canvas id="leadStatusChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Chart 2: Opportunity Pipeline Stages -->
+  <div class="glass-card" style="margin-bottom: 0;">
+    <div class="card-header-flex">
+      <h3 class="card-title">
+        <i class="fa-solid fa-bars-staggered" style="color: var(--primary);"></i>
+        <span>Pipeline Stages</span>
+      </h3>
+      <span style="font-size: 0.75rem; color: var(--text-dim);">Active Deals</span>
+    </div>
+    <div style="height: 260px; position: relative;">
+      <canvas id="pipelineStageChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Chart 3: Monthly Sales Outcomes -->
+  <div class="glass-card" style="margin-bottom: 0;">
+    <div class="card-header-flex">
+      <h3 class="card-title">
+        <i class="fa-solid fa-arrow-trend-up" style="color: var(--success);"></i>
+        <span>Monthly Sales Trend</span>
+      </h3>
+      <span style="font-size: 0.75rem; color: var(--text-dim);">Last 6 Months</span>
+    </div>
+    <div style="height: 260px; position: relative;">
+      <canvas id="monthlySalesChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Operational Summary Panels: Upcoming Follow-ups & Recent Activities -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+  <!-- Upcoming / Overdue Follow-ups -->
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <h3 class="card-title">
+        <i class="fa-regular fa-calendar-check" style="color: var(--warning);"></i>
+        <span>Priority Follow-Ups</span>
+      </h3>
+      <a href="/followups" class="btn-crm btn-crm-secondary btn-crm-sm">View All</a>
+    </div>
+
+    <% if (upcomingFollowUps && upcomingFollowUps.length > 0) { %>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <% upcomingFollowUps.forEach(f => { %>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 255, 255, 0.03); border-radius: var(--radius-md); border-left: 3px solid <%= f.FollowUpDate < new Date().toISOString().split('T')[0] ? 'var(--danger)' : 'var(--primary)' %>;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.88rem; color: #fff;"><%= f.Subject %></div>
+              <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
+                <i class="fa-regular fa-user me-1"></i> <%= f.CustomerName || f.LeadName || 'Account' %> &bull; 
+                <i class="fa-solid fa-tag me-1"></i> <%= f.FollowUpType %>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge-status <%= f.FollowUpDate < new Date().toISOString().split('T')[0] ? 'badge-lost' : 'badge-new' %>" style="font-size: 0.72rem;">
+                <%= f.FollowUpDate %>
+              </span>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div style="text-align: center; padding: 30px; color: var(--text-dim); font-size: 0.88rem;">
+        <i class="fa-regular fa-circle-check" style="font-size: 2rem; margin-bottom: 8px; color: var(--success); display: block;"></i>
+        No pending follow-ups in this period.
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Recent Audit Events Trail -->
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <h3 class="card-title">
+        <i class="fa-solid fa-clock-rotate-left" style="color: var(--info);"></i>
+        <span>Recent Activity & Audit Trail</span>
+      </h3>
+      <% if (currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Manager')) { %>
+        <a href="/audit" class="btn-crm btn-crm-secondary btn-crm-sm">Full Audit</a>
+      <% } %>
+    </div>
+
+    <% if (recentAudits && recentAudits.length > 0) { %>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <% recentAudits.forEach(a => { %>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-sm); font-size: 0.82rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="user-role-badge" style="font-size: 0.68rem; padding: 2px 6px;"><%= a.Action %></span>
+              <span style="color: var(--text-main);"><%= a.Details || a.EntityName %></span>
+            </div>
+            <span style="color: var(--text-dim); font-size: 0.75rem;"><%= a.CreatedDate ? a.CreatedDate.split(' ')[0] : '' %></span>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div style="text-align: center; padding: 30px; color: var(--text-dim);">No audit logs recorded yet.</div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const rawData = <%- JSON.stringify(charts) %>;
+    initDashboardCharts(rawData);
+  });
+</script>

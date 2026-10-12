@@ -1,0 +1,156 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Activity Management</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Real-time tracking of phone calls, client meetings, emails, and tasks</p>
+    </div>
+    <button type="button" class="btn-crm btn-crm-primary btn-crm-sm" onclick="document.getElementById('newActivityModal').style.display = 'flex';">
+      <i class="fa-solid fa-plus"></i>
+      <span>Log Activity</span>
+    </button>
+  </div>
+
+  <!-- Type & Status Filters (Section 17.13) -->
+  <form action="/activities" method="GET" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div style="width: 160px;">
+      <select name="type" class="form-control-crm">
+        <option value="">All Activity Types</option>
+        <option value="Call" <%= type === 'Call' ? 'selected' : '' %>>Phone Call</option>
+        <option value="Meeting" <%= type === 'Meeting' ? 'selected' : '' %>>Meeting</option>
+        <option value="Email" <%= type === 'Email' ? 'selected' : '' %>>Email</option>
+        <option value="Task" <%= type === 'Task' ? 'selected' : '' %>>Task</option>
+      </select>
+    </div>
+    <div style="width: 160px;">
+      <select name="status" class="form-control-crm">
+        <option value="">All Statuses</option>
+        <option value="Completed" <%= status === 'Completed' ? 'selected' : '' %>>Completed</option>
+        <option value="Pending" <%= status === 'Pending' ? 'selected' : '' %>>Pending</option>
+        <option value="Cancelled" <%= status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-crm btn-crm-secondary">
+      <i class="fa-solid fa-filter"></i>
+      <span>Filter</span>
+    </button>
+    <% if (type || status) { %>
+      <a href="/activities" class="btn-crm btn-crm-secondary" title="Clear Filters">
+        <i class="fa-solid fa-xmark"></i>
+      </a>
+    <% } %>
+  </form>
+
+  <!-- Activities Table -->
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Subject & Description</th>
+          <th>Account / Lead</th>
+          <th>Status</th>
+          <th>Logged By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (activities && activities.length > 0) { %>
+          <% activities.forEach(a => { %>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-size: 0.85rem;"><%= a.ActivityDate %></span></td>
+              <td><span class="user-role-badge"><%= a.ActivityType %></span></td>
+              <td>
+                <div style="font-weight: 600; color: #fff;"><%= a.Subject %></div>
+                <% if (a.Description) { %>
+                  <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 2px;"><%= a.Description %></div>
+                <% } %>
+              </td>
+              <td>
+                <% if (a.CustomerName) { %>
+                  <a href="/customers/<%= a.CustomerId %>" style="color: var(--secondary); text-decoration: none; font-size: 0.85rem;">
+                    <%= a.CustomerName %>
+                  </a>
+                <% } else if (a.LeadName) { %>
+                  <a href="/leads/<%= a.LeadId %>" style="color: #818cf8; text-decoration: none; font-size: 0.85rem;">
+                    <%= a.LeadName %>
+                  </a>
+                <% } else { %>
+                  <span style="color: var(--text-dim);">—</span>
+                <% } %>
+              </td>
+              <td>
+                <span class="badge-status <%= a.Status === 'Completed' ? 'badge-active' : 'badge-new' %>"><%= a.Status %></span>
+              </td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);"><%= a.AssignedName || '—' %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-dim);">
+              <i class="fa-solid fa-list-check" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+              No activities found matching criteria.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Log Activity Modal -->
+<div id="newActivityModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center;">
+  <div class="glass-card" style="width: 100%; max-width: 520px; margin: 20px; background: #111827;">
+    <div class="card-header-flex">
+      <h3 class="card-title" style="margin: 0;">
+        <i class="fa-solid fa-plus text-primary"></i>
+        <span>Log Sales Activity</span>
+      </h3>
+      <button type="button" onclick="document.getElementById('newActivityModal').style.display = 'none';" style="background: none; border: none; color: var(--text-dim); font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form action="/activities/create" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div>
+          <label class="form-label" for="actType">Activity Type</label>
+          <select id="actType" name="ActivityType" class="form-control-crm">
+            <option value="Call">Phone Call</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Email">Email</option>
+            <option value="Task">Task</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="actDate">Date</label>
+          <input type="date" id="actDate" name="ActivityDate" class="form-control-crm" value="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label class="form-label" for="actSubject">Subject <span class="text-danger">*</span></label>
+        <input type="text" id="actSubject" name="Subject" class="form-control-crm" placeholder="Discovery call with CEO" required data-name="Subject">
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label class="form-label" for="actCustomer">Link to Customer Account</label>
+        <select id="actCustomer" name="CustomerId" class="form-control-crm">
+          <option value="">-- None --</option>
+          <% customers.forEach(c => { %>
+            <option value="<%= c.CustomerId %>"><%= c.CustomerName %> (<%= c.CustomerCode %>)</option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="form-label" for="actDesc">Details / Notes</label>
+        <textarea id="actDesc" name="Description" rows="3" class="form-control-crm" placeholder="Meeting minutes, follow-up items..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn-crm btn-crm-secondary" onclick="document.getElementById('newActivityModal').style.display = 'none';">Cancel</button>
+        <button type="submit" class="btn-crm btn-crm-primary">Save Activity</button>
+      </div>
+    </form>
+  </div>
+</div>

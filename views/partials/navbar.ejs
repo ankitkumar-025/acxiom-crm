@@ -1,0 +1,33 @@
+<header class="app-header">
+  <div class="header-left">
+    <button class="btn-crm btn-crm-secondary btn-crm-sm d-lg-none" id="sidebarToggle" onclick="document.getElementById('appSidebar').classList.toggle('show')">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <h1 class="page-title"><%= typeof title !== 'undefined' ? title.split(' - ')[0] : 'AcxiomCRM' %></h1>
+  </div>
+
+  <div class="header-actions">
+    <div style="font-size: 0.85rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px;">
+      <i class="fa-regular fa-clock"></i>
+      <span><%= new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+    </div>
+
+    <% if (currentUser) { %>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="user-role-badge" style="font-size: 0.75rem; padding: 4px 10px;">
+          <i class="fa-solid fa-shield-cat me-1"></i> <%= currentUser.role %>
+        </span>
+        <a href="/profile" class="btn-crm btn-crm-secondary btn-crm-sm" title="My Profile & Security">
+          <i class="fa-solid fa-user-circle"></i>
+          <span>Profile</span>
+        </a>
+        <a href="/logout" class="btn-crm btn-crm-danger btn-crm-sm" title="Sign Out">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    <% } else { %>
+      <a href="/login" class="btn-crm btn-crm-primary btn-crm-sm">Sign In</a>
+    <% } %>
+  </div>
+</header>

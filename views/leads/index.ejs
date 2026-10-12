@@ -1,0 +1,141 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Lead Pipeline</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Prospect tracking, lead scoring, qualification and conversion</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="/reports/leads" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-solid fa-file-export"></i>
+        <span>Report</span>
+      </a>
+      <a href="/leads/create" class="btn-crm btn-crm-primary btn-crm-sm">
+        <i class="fa-solid fa-plus"></i>
+        <span>New Lead</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls (Section 17.13) -->
+  <form action="/leads" method="GET" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 240px;">
+      <input type="text" name="search" class="form-control-crm" placeholder="Search by Lead Name, Email, Phone, Company, or Code..." value="<%= search %>">
+    </div>
+    <div style="width: 180px;">
+      <select name="status" class="form-control-crm">
+        <option value="">All Statuses</option>
+        <option value="New" <%= status === 'New' ? 'selected' : '' %>>New</option>
+        <option value="Contacted" <%= status === 'Contacted' ? 'selected' : '' %>>Contacted</option>
+        <option value="Qualified" <%= status === 'Qualified' ? 'selected' : '' %>>Qualified</option>
+        <option value="Unqualified" <%= status === 'Unqualified' ? 'selected' : '' %>>Unqualified</option>
+        <option value="Converted" <%= status === 'Converted' ? 'selected' : '' %>>Converted</option>
+        <option value="Lost" <%= status === 'Lost' ? 'selected' : '' %>>Lost</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-crm btn-crm-secondary">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Filter</span>
+    </button>
+    <% if (search || status) { %>
+      <a href="/leads" class="btn-crm btn-crm-secondary" title="Clear Filters">
+        <i class="fa-solid fa-xmark"></i>
+      </a>
+    <% } %>
+  </form>
+
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Lead Name</th>
+          <th>Company</th>
+          <th>Contact</th>
+          <th>Source</th>
+          <th>Status</th>
+          <th>Est. Value</th>
+          <th>Assigned Rep</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (leads && leads.length > 0) { %>
+          <% leads.forEach(l => { %>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--secondary);"><%= l.LeadCode %></span></td>
+              <td>
+                <a href="/leads/<%= l.LeadId %>" style="color: #fff; font-weight: 600; text-decoration: none;">
+                  <%= l.LeadName %>
+                </a>
+              </td>
+              <td style="color: var(--text-muted);"><%= l.CompanyName || '—' %></td>
+              <td>
+                <div style="font-size: 0.85rem;"><%= l.Email %></div>
+                <div style="font-size: 0.78rem; color: var(--text-dim);"><%= l.Phone %></div>
+              </td>
+              <td><span class="user-role-badge" style="font-size: 0.72rem;"><%= l.Source %></span></td>
+              <td>
+                <% 
+                  let badgeClass = 'badge-new';
+                  if (l.Status === 'Contacted') badgeClass = 'badge-contacted';
+                  if (l.Status === 'Qualified') badgeClass = 'badge-qualified';
+                  if (l.Status === 'Converted') badgeClass = 'badge-converted';
+                  if (l.Status === 'Lost') badgeClass = 'badge-lost';
+                  if (l.Status === 'Unqualified') badgeClass = 'badge-inactive';
+                %>
+                <span class="badge-status <%= badgeClass %>"><%= l.Status %></span>
+              </td>
+              <td><strong>$<%= Number(l.ExpectedValue).toLocaleString() %></strong></td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);"><%= l.AssignedName || 'Unassigned' %></td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 6px;">
+                  <% if (l.Status !== 'Converted') { %>
+                    <a href="/leads/<%= l.LeadId %>/convert" class="btn-crm btn-crm-primary btn-crm-sm" title="Convert Lead">
+                      <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                      <span>Convert</span>
+                    </a>
+                  <% } %>
+                  <a href="/leads/<%= l.LeadId %>" class="btn-crm btn-crm-secondary btn-crm-sm" title="View Details">
+                    <i class="fa-solid fa-eye"></i>
+                  </a>
+                  <a href="/leads/<%= l.LeadId %>/edit" class="btn-crm btn-crm-secondary btn-crm-sm" title="Edit Lead">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+                  <form action="/leads/<%= l.LeadId %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Delete lead <%= l.LeadName %>?');">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-crm btn-crm-danger btn-crm-sm" title="Delete Lead">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-dim);">
+              <i class="fa-regular fa-folder-open" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+              No lead records found.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if (totalPages > 1) { %>
+    <div class="crm-pagination">
+      <div style="font-size: 0.85rem; color: var(--text-dim);">
+        Showing page <strong><%= currentPage %></strong> of <strong><%= totalPages %></strong> (<%= totalCount %> total)
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <% if (currentPage > 1) { %>
+          <a href="/leads?page=<%= currentPage - 1 %>&search=<%= search %>&status=<%= status %>" class="btn-crm btn-crm-secondary btn-crm-sm">Previous</a>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+          <a href="/leads?page=<%= currentPage + 1 %>&search=<%= search %>&status=<%= status %>" class="btn-crm btn-crm-secondary btn-crm-sm">Next</a>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</div>

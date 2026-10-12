@@ -1,0 +1,104 @@
+<div style="max-width: 900px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <a href="/opportunities" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Opportunities</span>
+    </a>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Create Sales Opportunity</h2>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Configure deal parameters, probability weighting, and expected close timeline</p>
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-dim);"><i class="fa-solid fa-asterisk text-danger"></i> Required fields</span>
+    </div>
+
+    <form action="/opportunities/create" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px;">
+        <!-- Opportunity Name -->
+        <div>
+          <label class="form-label" for="OpportunityName">Opportunity Name <span class="text-danger">*</span></label>
+          <input type="text" id="OpportunityName" name="OpportunityName" class="form-control-crm" placeholder="Enterprise Cloud Migration" value="<%= typeof data !== 'undefined' && data.OpportunityName ? data.OpportunityName : '' %>" required data-name="Opportunity Name">
+        </div>
+
+        <!-- Customer Selection -->
+        <div>
+          <label class="form-label" for="CustomerId">Customer Account <span class="text-danger">*</span></label>
+          <select id="CustomerId" name="CustomerId" class="form-control-crm" required data-name="Customer">
+            <option value="">-- Select Customer Account --</option>
+            <% customers.forEach(c => { %>
+              <option value="<%= c.CustomerId %>" <%= (typeof customerId !== 'undefined' && customerId == c.CustomerId) || (typeof data !== 'undefined' && data.CustomerId == c.CustomerId) ? 'selected' : '' %>>
+                <%= c.CustomerName %> (<%= c.CustomerCode %>)
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- Amount (Must be > 0) -->
+        <div>
+          <label class="form-label" for="Amount">Deal Amount ($) <span class="text-danger">*</span></label>
+          <input type="number" id="Amount" name="Amount" class="form-control-crm" placeholder="75000" min="1" step="100" value="<%= typeof data !== 'undefined' && data.Amount ? data.Amount : '50000' %>" required data-name="Amount">
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Must be greater than 0</span>
+        </div>
+
+        <!-- Probability (0 - 100) -->
+        <div>
+          <label class="form-label" for="Probability">Probability (%) <span class="text-danger">*</span></label>
+          <input type="number" id="Probability" name="Probability" class="form-control-crm" placeholder="50" min="0" max="100" value="<%= typeof data !== 'undefined' && data.Probability !== undefined ? data.Probability : '50' %>" required data-name="Probability">
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Between 0 and 100</span>
+        </div>
+
+        <!-- Stage -->
+        <div>
+          <label class="form-label" for="Stage">Pipeline Stage</label>
+          <select id="Stage" name="Stage" class="form-control-crm">
+            <option value="Qualification" selected>Qualification</option>
+            <option value="Proposal">Proposal</option>
+            <option value="Negotiation">Negotiation</option>
+            <option value="Won">Won</option>
+            <option value="Lost">Lost</option>
+          </select>
+        </div>
+
+        <!-- Expected Close Date (Cannot be in the past) -->
+        <div>
+          <label class="form-label" for="ExpectedCloseDate">Expected Close Date <span class="text-danger">*</span></label>
+          <input type="date" id="ExpectedCloseDate" name="ExpectedCloseDate" class="form-control-crm" value="<%= typeof data !== 'undefined' && data.ExpectedCloseDate ? data.ExpectedCloseDate : new Date(Date.now() + 15*24*60*60*1000).toISOString().split('T')[0] %>" required data-name="Expected Close Date">
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Cannot be earlier than today</span>
+        </div>
+
+        <!-- Assigned To -->
+        <% if (currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Manager')) { %>
+          <div>
+            <label class="form-label" for="AssignedTo">Assigned Sales Executive</label>
+            <select id="AssignedTo" name="AssignedTo" class="form-control-crm">
+              <% salesUsers.forEach(u => { %>
+                <option value="<%= u.UserId %>" <%= (typeof data !== 'undefined' && data.AssignedTo == u.UserId) ? 'selected' : '' %>>
+                  <%= u.Name %> (<%= u.Email %>)
+                </option>
+              <% }); %>
+            </select>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Notes -->
+      <div style="margin-bottom: 24px;">
+        <label class="form-label" for="Notes">Scope & Negotiation Details</label>
+        <textarea id="Notes" name="Notes" rows="3" class="form-control-crm" placeholder="Deliverables, pricing terms, competitors..."><%= typeof data !== 'undefined' && data.Notes ? data.Notes : '' %></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <a href="/opportunities" class="btn-crm btn-crm-secondary">Cancel</a>
+        <button type="submit" class="btn-crm btn-crm-primary">
+          <i class="fa-solid fa-save"></i>
+          <span>Save Opportunity</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

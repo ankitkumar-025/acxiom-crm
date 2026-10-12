@@ -1,0 +1,27 @@
+<% if (typeof success !== 'undefined' && success) { %>
+  <div class="crm-alert crm-alert-success">
+    <i class="fa-solid fa-circle-check" style="font-size: 1.1rem;"></i>
+    <div><%= success %></div>
+  </div>
+<% } %>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="crm-alert crm-alert-danger">
+    <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.1rem;"></i>
+    <div><%= error %></div>
+  </div>
+<% } %>
+
+<% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+  <div class="crm-alert crm-alert-danger" style="display: block;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-weight: 700;">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>Please fix the following validation errors:</span>
+    </div>
+    <ul style="margin: 0; padding-left: 24px; font-size: 0.85rem;">
+      <% errors.forEach(err => { %>
+        <li><%= err %></li>
+      <% }); %>
+    </ul>
+  </div>
+<% } %>

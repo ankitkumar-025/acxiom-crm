@@ -1,0 +1,180 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Follow-Up Management</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Manage upcoming client appointments, calls, meetings and overdue tasks</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="/reports/followups" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-solid fa-file-export"></i>
+        <span>Report</span>
+      </a>
+      <a href="/followups/create" class="btn-crm btn-crm-primary btn-crm-sm">
+        <i class="fa-solid fa-plus"></i>
+        <span>Schedule Follow-Up</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Category Tabs (Section 4.6 & 17.7) -->
+  <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; flex-wrap: wrap;">
+    <a href="/followups" class="btn-crm btn-crm-sm <%= !status ? 'btn-crm-primary' : 'btn-crm-secondary' %>">
+      All Follow-Ups
+    </a>
+    <a href="/followups?status=Upcoming" class="btn-crm btn-crm-sm <%= status === 'Upcoming' ? 'btn-crm-primary' : 'btn-crm-secondary' %>">
+      <i class="fa-solid fa-clock me-1"></i> Upcoming (<%= upcomingCount %>)
+    </a>
+    <a href="/followups?status=Overdue" class="btn-crm btn-crm-sm <%= status === 'Overdue' ? 'btn-crm-danger' : 'btn-crm-secondary' %>">
+      <i class="fa-solid fa-circle-exclamation me-1"></i> Overdue (<%= overdueCount %>)
+    </a>
+    <a href="/followups?status=Completed" class="btn-crm btn-crm-sm <%= status === 'Completed' ? 'btn-crm-success' : 'btn-crm-secondary' %>">
+      <i class="fa-solid fa-circle-check me-1"></i> Completed (<%= completedCount %>)
+    </a>
+  </div>
+
+  <!-- Follow-Up Table -->
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Follow-Up Date</th>
+          <th>Type</th>
+          <th>Subject</th>
+          <th>Account / Lead</th>
+          <th>Status</th>
+          <th>Assigned Rep</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (followUps && followUps.length > 0) { %>
+          <% followUps.forEach(f => { %>
+            <tr>
+              <td>
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: <%= (f.Status === 'Planned' && f.FollowUpDate < new Date().toISOString().split('T')[0]) ? '#f87171' : '#fff' %>;">
+                  <%= f.FollowUpDate %>
+                </span>
+                <% if (f.Status === 'Planned' && f.FollowUpDate < new Date().toISOString().split('T')[0]) { %>
+                  <span class="badge-status badge-lost" style="font-size: 0.68rem; margin-left: 4px;">Overdue</span>
+                <% } %>
+              </td>
+              <td><span class="user-role-badge"><%= f.FollowUpType %></span></td>
+              <td>
+                <div style="font-weight: 600; color: #fff;"><%= f.Subject %></div>
+                <% if (f.Remarks) { %>
+                  <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 2px;"><%= f.Remarks %></div>
+                <% } %>
+              </td>
+              <td>
+                <% if (f.CustomerName) { %>
+                  <a href="/customers/<%= f.CustomerId %>" style="color: var(--secondary); text-decoration: none; font-size: 0.85rem;">
+                    <%= f.CustomerName %>
+                  </a>
+                <% } else if (f.LeadName) { %>
+                  <a href="/leads/<%= f.LeadId %>" style="color: #818cf8; text-decoration: none; font-size: 0.85rem;">
+                    <%= f.LeadName %>
+                  </a>
+                <% } else { %>
+                  <span style="color: var(--text-dim);">—</span>
+                <% } %>
+              </td>
+              <td>
+                <span class="badge-status <%= f.Status === 'Completed' ? 'badge-active' : (f.Status === 'Planned' ? 'badge-new' : 'badge-lost') %>">
+                  <%= f.Status %>
+                </span>
+              </td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);"><%= f.AssignedName || 'Unassigned' %></td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 6px;">
+                  <% if (f.Status !== 'Completed') { %>
+                    <!-- Complete Action -->
+                    <form action="/followups/<%= f.FollowUpId %>/complete" method="POST" style="display: inline;">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn-crm btn-crm-success btn-crm-sm" title="Mark as Completed">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Done</span>
+                      </button>
+                    </form>
+
+                    <!-- Reschedule Trigger Button -->
+                    <button type="button" class="btn-crm btn-crm-secondary btn-crm-sm" title="Reschedule" onclick="openRescheduleModal('<%= f.FollowUpId %>', '<%= f.Subject %>', '<%= f.FollowUpDate %>')">
+                      <i class="fa-solid fa-calendar-days"></i>
+                    </button>
+                  <% } %>
+
+                  <form action="/followups/<%= f.FollowUpId %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Delete this follow-up?');">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-crm btn-crm-danger btn-crm-sm" title="Delete">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-dim);">
+              <i class="fa-regular fa-calendar-check" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+              No follow-ups found in this category.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Reschedule Modal -->
+<div id="rescheduleModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center;">
+  <div class="glass-card" style="width: 100%; max-width: 480px; margin: 20px; background: #111827;">
+    <div class="card-header-flex">
+      <h3 class="card-title" style="margin: 0;">
+        <i class="fa-solid fa-calendar-days text-primary"></i>
+        <span>Reschedule Follow-Up</span>
+      </h3>
+      <button type="button" onclick="closeRescheduleModal()" style="background: none; border: none; color: var(--text-dim); font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="rescheduleForm" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="margin-bottom: 14px;">
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Subject:</div>
+        <div id="modalSubject" style="font-weight: 700; color: #fff;"></div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label" for="modalNewDate">New Follow-Up Date <span class="text-danger">*</span></label>
+        <input type="date" id="modalNewDate" name="newDate" class="form-control-crm" required data-name="New Date">
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Cannot be earlier than today</span>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="form-label" for="modalReason">Reason for Rescheduling</label>
+        <input type="text" id="modalReason" name="reason" class="form-control-crm" placeholder="Client requested later meeting time">
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn-crm btn-crm-secondary" onclick="closeRescheduleModal()">Cancel</button>
+        <button type="submit" class="btn-crm btn-crm-primary">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span>Confirm Reschedule</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openRescheduleModal(id, subject, currentDate) {
+    document.getElementById('rescheduleForm').action = '/followups/' + id + '/reschedule';
+    document.getElementById('modalSubject').innerText = subject;
+    document.getElementById('modalNewDate').value = currentDate;
+    document.getElementById('rescheduleModal').style.display = 'flex';
+  }
+
+  function closeRescheduleModal() {
+    document.getElementById('rescheduleModal').style.display = 'none';
+  }
+</script>

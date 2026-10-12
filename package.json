@@ -1,0 +1,23 @@
+{
+  "name": "acxiom-crm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/runTests.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^7.0.1",
+    "express": "^5.3.0",
+    "express-ejs-layouts": "^2.5.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

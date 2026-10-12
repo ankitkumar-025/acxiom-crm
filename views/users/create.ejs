@@ -1,0 +1,66 @@
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <a href="/users" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Users</span>
+    </a>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Provision New Application User</h2>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Assign system role and security credentials</p>
+      </div>
+    </div>
+
+    <form action="/users/create" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-bottom: 20px;">
+        <div>
+          <label class="form-label" for="userName">Full Name <span class="text-danger">*</span></label>
+          <input type="text" id="userName" name="name" class="form-control-crm" placeholder="Jane Doe" value="<%= typeof data !== 'undefined' && data.name ? data.name : '' %>" required data-name="Name">
+        </div>
+
+        <div>
+          <label class="form-label" for="userEmail">Email Address <span class="text-danger">*</span></label>
+          <input type="email" id="userEmail" name="email" class="form-control-crm" placeholder="jane.doe@acxiomcrm.com" value="<%= typeof data !== 'undefined' && data.email ? data.email : '' %>" required data-name="Email">
+        </div>
+
+        <div>
+          <label class="form-label" for="userRole">Assigned Role <span class="text-danger">*</span></label>
+          <select id="userRole" name="role" class="form-control-crm">
+            <option value="SalesExecutive" selected>Sales Executive</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Administrator</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" for="userActive">Account Status</label>
+          <select id="userActive" name="isActive" class="form-control-crm">
+            <option value="1" selected>Active</option>
+            <option value="0">Deactivated</option>
+          </select>
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <label class="form-label" for="userPassword">Initial Password <span class="text-danger">*</span></label>
+          <input type="password" id="userPassword" name="password" class="form-control-crm" placeholder="••••••••" required data-name="Password">
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
+            Enforce policy: Minimum 8 characters, uppercase, lowercase, digit, and symbol.
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <a href="/users" class="btn-crm btn-crm-secondary">Cancel</a>
+        <button type="submit" class="btn-crm btn-crm-primary">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Create User</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

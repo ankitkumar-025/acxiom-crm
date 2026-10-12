@@ -1,0 +1,165 @@
+<div style="margin-bottom: 20px;">
+  <a href="/customers" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span>Back to Customers</span>
+  </a>
+</div>
+
+<!-- Customer Profile Header Card -->
+<div class="glass-card" style="margin-bottom: 24px;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+    <div style="display: flex; gap: 20px; align-items: center;">
+      <div style="width: 60px; height: 60px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff;">
+        <i class="fa-solid fa-building"></i>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0;"><%= customer.CustomerName %></h2>
+          <span class="badge-status <%= customer.Status === 'Active' ? 'badge-active' : 'badge-inactive' %>"><%= customer.Status %></span>
+        </div>
+        <div style="display: flex; gap: 16px; margin-top: 6px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap;">
+          <span><i class="fa-solid fa-barcode me-1"></i> <%= customer.CustomerCode %></span>
+          <span><i class="fa-regular fa-envelope me-1"></i> <%= customer.Email %></span>
+          <span><i class="fa-solid fa-phone me-1"></i> <%= customer.Phone %></span>
+          <% if (customer.City) { %>
+            <span><i class="fa-solid fa-location-dot me-1"></i> <%= customer.City %>, <%= customer.State %></span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <a href="/opportunities/create?customerId=<%= customer.CustomerId %>" class="btn-crm btn-crm-primary btn-crm-sm">
+        <i class="fa-solid fa-handshake"></i>
+        <span>+ Opportunity</span>
+      </a>
+      <a href="/followups/create?customerId=<%= customer.CustomerId %>" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-regular fa-calendar-plus"></i>
+        <span>+ Follow-Up</span>
+      </a>
+      <a href="/customers/<%= customer.CustomerId %>/edit" class="btn-crm btn-crm-secondary btn-crm-sm">
+        <i class="fa-solid fa-pen"></i>
+        <span>Edit</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Customer History & Related Records Timeline (Section 4.4) -->
+<div class="glass-card">
+  <h3 class="card-title" style="margin-bottom: 20px;">
+    <i class="fa-solid fa-timeline" style="color: var(--secondary);"></i>
+    <span>Customer History & Activity Timeline</span>
+  </h3>
+
+  <!-- 1. Related Opportunities -->
+  <div style="margin-bottom: 28px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin: 0;">
+        <i class="fa-solid fa-handshake me-1" style="color: var(--primary);"></i> Opportunities (<%= history.opportunities.length %>)
+      </h4>
+    </div>
+    <% if (history.opportunities && history.opportunities.length > 0) { %>
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th>Opportunity Name</th>
+            <th>Amount</th>
+            <th>Stage</th>
+            <th>Probability</th>
+            <th>Expected Close Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% history.opportunities.forEach(o => { %>
+            <tr>
+              <td>
+                <a href="/opportunities/<%= o.OpportunityId %>" style="color: #fff; font-weight: 600; text-decoration: none;">
+                  <%= o.OpportunityName %>
+                </a>
+              </td>
+              <td><strong>$<%= Number(o.Amount).toLocaleString() %></strong></td>
+              <td><span class="user-role-badge"><%= o.Stage %></span></td>
+              <td><%= o.Probability %>%</td>
+              <td style="color: var(--text-dim);"><%= o.ExpectedCloseDate %></td>
+              <td><span class="badge-status <%= o.Status === 'Won' ? 'badge-won' : (o.Status === 'Lost' ? 'badge-lost' : 'badge-new') %>"><%= o.Status %></span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">No sales opportunities associated with this customer yet.</p>
+    <% } %>
+  </div>
+
+  <!-- 2. Follow-Ups -->
+  <div style="margin-bottom: 28px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin: 0;">
+        <i class="fa-regular fa-calendar-check me-1" style="color: var(--warning);"></i> Follow-Ups (<%= history.followUps.length %>)
+      </h4>
+    </div>
+    <% if (history.followUps && history.followUps.length > 0) { %>
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Subject</th>
+            <th>Remarks</th>
+            <th>Assigned To</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% history.followUps.forEach(f => { %>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-size: 0.8rem;"><%= f.FollowUpDate %></span></td>
+              <td><%= f.FollowUpType %></td>
+              <td style="font-weight: 600; color: #fff;"><%= f.Subject %></td>
+              <td style="color: var(--text-muted); font-size: 0.85rem;"><%= f.Remarks || '—' %></td>
+              <td><%= f.AssignedName || '—' %></td>
+              <td><span class="badge-status <%= f.Status === 'Completed' ? 'badge-active' : 'badge-new' %>"><%= f.Status %></span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">No follow-up records on file.</p>
+    <% } %>
+  </div>
+
+  <!-- 3. Activities -->
+  <div>
+    <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin: 0 0 12px;">
+      <i class="fa-solid fa-list-check me-1" style="color: var(--info);"></i> Activities (<%= history.activities.length %>)
+    </h4>
+    <% if (history.activities && history.activities.length > 0) { %>
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Subject</th>
+            <th>Description</th>
+            <th>Logged By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% history.activities.forEach(a => { %>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-size: 0.8rem;"><%= a.ActivityDate %></span></td>
+              <td><span class="user-role-badge"><%= a.ActivityType %></span></td>
+              <td style="font-weight: 600; color: #fff;"><%= a.Subject %></td>
+              <td style="color: var(--text-muted);"><%= a.Description || '—' %></td>
+              <td><%= a.AssignedName || '—' %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">No past activity logs recorded.</p>
+    <% } %>
+  </div>
+</div>

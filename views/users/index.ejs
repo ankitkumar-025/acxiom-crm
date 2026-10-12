@@ -1,0 +1,143 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">User & Role Management</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Administer user accounts, security roles, activation and lockout status</p>
+    </div>
+    <a href="/users/create" class="btn-crm btn-crm-primary btn-crm-sm">
+      <i class="fa-solid fa-user-plus"></i>
+      <span>Create User</span>
+    </a>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Role</th>
+          <th>Account Status</th>
+          <th>Lockout Status</th>
+          <th>Failed Logins</th>
+          <th>Created Date</th>
+          <th style="text-align: right;">Security Administration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+          <% 
+            const isCurrentlyLocked = u.LockoutEnd && new Date(u.LockoutEnd) > new Date();
+          %>
+          <tr>
+            <td>
+              <div style="font-weight: 600; color: #fff;"><%= u.Name %></div>
+              <div style="font-size: 0.78rem; color: var(--text-dim);"><%= u.Email %></div>
+            </td>
+            <td>
+              <span class="user-role-badge" style="font-size: 0.75rem;">
+                <%= u.Role %>
+              </span>
+            </td>
+            <td>
+              <span class="badge-status <%= u.IsActive === 1 ? 'badge-active' : 'badge-inactive' %>">
+                <%= u.IsActive === 1 ? 'Active' : 'Deactivated' %>
+              </span>
+            </td>
+            <td>
+              <% if (isCurrentlyLocked) { %>
+                <span class="badge-status badge-lost">
+                  <i class="fa-solid fa-lock"></i> Locked until <%= u.LockoutEnd.split('T')[1].substring(0, 5) %>
+                </span>
+              <% } else { %>
+                <span class="badge-status badge-active" style="background: rgba(255,255,255,0.05); color: var(--text-dim);">
+                  <i class="fa-solid fa-lock-open"></i> Normal
+                </span>
+              <% } %>
+            </td>
+            <td style="font-family: var(--font-mono); font-size: 0.85rem; color: <%= u.FailedLoginCount > 0 ? '#fbbf24' : 'var(--text-dim)' %>;">
+              <%= u.FailedLoginCount %> / 5
+            </td>
+            <td style="font-size: 0.8rem; color: var(--text-dim);">
+              <%= u.CreatedDate ? u.CreatedDate.split(' ')[0] : '—' %>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 6px;">
+                <!-- Unlock Action if locked -->
+                <% if (isCurrentlyLocked || u.FailedLoginCount > 0) { %>
+                  <form action="/users/<%= u.UserId %>/unlock" method="POST" style="display: inline;">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-crm btn-crm-success btn-crm-sm" title="Unlock Account and Reset Counters">
+                      <i class="fa-solid fa-key"></i>
+                      <span>Unlock</span>
+                    </button>
+                  </form>
+                <% } %>
+
+                <!-- Toggle Status -->
+                <% if (u.UserId !== currentUser.userId) { %>
+                  <form action="/users/<%= u.UserId %>/toggle" method="POST" style="display: inline;" onsubmit="return confirm('Toggle active status for <%= u.Name %>?');">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-crm btn-crm-secondary btn-crm-sm" title="<%= u.IsActive === 1 ? 'Deactivate' : 'Activate' %>">
+                      <i class="fa-solid <%= u.IsActive === 1 ? 'fa-user-slash text-danger' : 'fa-user-check text-success' %>"></i>
+                    </button>
+                  </form>
+                <% } %>
+
+                <!-- Reset Password Trigger -->
+                <button type="button" class="btn-crm btn-crm-secondary btn-crm-sm" title="Admin Reset Password" onclick="openResetModal('<%= u.UserId %>', '<%= u.Name %>')">
+                  <i class="fa-solid fa-shield"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Admin Password Reset Modal -->
+<div id="resetModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center;">
+  <div class="glass-card" style="width: 100%; max-width: 460px; margin: 20px; background: #111827;">
+    <div class="card-header-flex">
+      <h3 class="card-title" style="margin: 0;">
+        <i class="fa-solid fa-key text-warning"></i>
+        <span>Reset User Password</span>
+      </h3>
+      <button type="button" onclick="closeResetModal()" style="background: none; border: none; color: var(--text-dim); font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="resetForm" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="margin-bottom: 14px; font-size: 0.88rem; color: var(--text-muted);">
+        Setting new password for: <strong id="resetUserName" style="color: #fff;"></strong>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="form-label" for="newPasswordInput">New Password <span class="text-danger">*</span></label>
+        <input type="password" id="newPasswordInput" name="newPassword" class="form-control-crm" placeholder="••••••••" required data-name="New Password">
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
+          Must meet policy: 8+ chars, upper, lower, number, special character.
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn-crm btn-crm-secondary" onclick="closeResetModal()">Cancel</button>
+        <button type="submit" class="btn-crm btn-crm-primary">Confirm Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openResetModal(userId, name) {
+    document.getElementById('resetForm').action = '/users/' + userId + '/reset-password';
+    document.getElementById('resetUserName').innerText = name;
+    document.getElementById('resetModal').style.display = 'flex';
+  }
+
+  function closeResetModal() {
+    document.getElementById('resetModal').style.display = 'none';
+  }
+</script>

@@ -1,0 +1,103 @@
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <a href="/followups" style="color: var(--text-dim); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Follow-Ups</span>
+    </a>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header-flex">
+      <div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Schedule Follow-Up Task</h2>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Set target date, communication mode, and discussion agenda</p>
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-dim);"><i class="fa-solid fa-asterisk text-danger"></i> Required fields</span>
+    </div>
+
+    <form action="/followups/create" method="POST" class="needs-crm-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-bottom: 18px;">
+        <!-- Subject -->
+        <div style="grid-column: 1 / -1;">
+          <label class="form-label" for="Subject">Follow-Up Subject <span class="text-danger">*</span></label>
+          <input type="text" id="Subject" name="Subject" class="form-control-crm" placeholder="Review contract terms with Procurement Team" value="<%= typeof data !== 'undefined' && data.Subject ? data.Subject : '' %>" required data-name="Subject">
+        </div>
+
+        <!-- Follow-Up Date (Must be today or future) -->
+        <div>
+          <label class="form-label" for="FollowUpDate">Target Date <span class="text-danger">*</span></label>
+          <input type="date" id="FollowUpDate" name="FollowUpDate" class="form-control-crm" value="<%= typeof data !== 'undefined' && data.FollowUpDate ? data.FollowUpDate : new Date().toISOString().split('T')[0] %>" required data-name="Follow-Up Date">
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Cannot be earlier than today</span>
+        </div>
+
+        <!-- Follow-Up Type -->
+        <div>
+          <label class="form-label" for="FollowUpType">Communication Type</label>
+          <select id="FollowUpType" name="FollowUpType" class="form-control-crm">
+            <option value="Call" selected>Phone Call</option>
+            <option value="Meeting">Meeting (In-Person/Virtual)</option>
+            <option value="Email">Email Follow-Up</option>
+            <option value="Visit">Site Visit</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Customer Selection -->
+        <div>
+          <label class="form-label" for="CustomerId">Related Customer Account</label>
+          <select id="CustomerId" name="CustomerId" class="form-control-crm">
+            <option value="">-- None (Or Select Customer) --</option>
+            <% customers.forEach(c => { %>
+              <option value="<%= c.CustomerId %>" <%= (typeof customerId !== 'undefined' && customerId == c.CustomerId) || (typeof data !== 'undefined' && data.CustomerId == c.CustomerId) ? 'selected' : '' %>>
+                <%= c.CustomerName %> (<%= c.CustomerCode %>)
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- Lead Selection -->
+        <div>
+          <label class="form-label" for="LeadId">Or Related Lead Prospect</label>
+          <select id="LeadId" name="LeadId" class="form-control-crm">
+            <option value="">-- None (Or Select Lead) --</option>
+            <% leads.forEach(l => { %>
+              <option value="<%= l.LeadId %>" <%= (typeof leadId !== 'undefined' && leadId == l.LeadId) || (typeof data !== 'undefined' && data.LeadId == l.LeadId) ? 'selected' : '' %>>
+                <%= l.LeadName %> (<%= l.LeadCode %>)
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- Assigned Rep -->
+        <% if (currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Manager')) { %>
+          <div>
+            <label class="form-label" for="AssignedTo">Assigned Sales Executive</label>
+            <select id="AssignedTo" name="AssignedTo" class="form-control-crm">
+              <% salesUsers.forEach(u => { %>
+                <option value="<%= u.UserId %>" <%= (typeof data !== 'undefined' && data.AssignedTo == u.UserId) ? 'selected' : '' %>>
+                  <%= u.Name %> (<%= u.Email %>)
+                </option>
+              <% }); %>
+            </select>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Remarks -->
+      <div style="margin-bottom: 24px;">
+        <label class="form-label" for="Remarks">Agenda & Instructions</label>
+        <textarea id="Remarks" name="Remarks" rows="3" class="form-control-crm" placeholder="Specific talking points, documents to share, or goals for this interaction..."><%= typeof data !== 'undefined' && data.Remarks ? data.Remarks : '' %></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <a href="/followups" class="btn-crm btn-crm-secondary">Cancel</a>
+        <button type="submit" class="btn-crm btn-crm-primary">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span>Save Follow-Up</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

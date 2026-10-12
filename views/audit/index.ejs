@@ -1,0 +1,130 @@
+<div class="glass-card">
+  <div class="card-header-flex">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 4px;">Audit Trail & Governance Logs</h2>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">Append-only immutable record of all security, authentication, and CRM transactions</p>
+    </div>
+    <a href="/reports/audit" class="btn-crm btn-crm-secondary btn-crm-sm">
+      <i class="fa-solid fa-file-export"></i>
+      <span>Export Audit Log</span>
+    </a>
+  </div>
+
+  <!-- Filter Controls (Section 4.9 & 17.16) -->
+  <form action="/audit" method="GET" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div style="width: 180px;">
+      <select name="action" class="form-control-crm">
+        <option value="">All Actions</option>
+        <option value="Login" <%= action === 'Login' ? 'selected' : '' %>>Login</option>
+        <option value="Failed Login" <%= action === 'Failed Login' ? 'selected' : '' %>>Failed Login</option>
+        <option value="Logout" <%= action === 'Logout' ? 'selected' : '' %>>Logout</option>
+        <option value="Create" <%= action === 'Create' ? 'selected' : '' %>>Create</option>
+        <option value="Update" <%= action === 'Update' ? 'selected' : '' %>>Update</option>
+        <option value="Delete" <%= action === 'Delete' ? 'selected' : '' %>>Delete</option>
+        <option value="Lead Conversion" <%= action === 'Lead Conversion' ? 'selected' : '' %>>Lead Conversion</option>
+        <option value="Role Change" <%= action === 'Role Change' ? 'selected' : '' %>>Role Change</option>
+        <option value="Security Event" <%= action === 'Security Event' ? 'selected' : '' %>>Security Event</option>
+      </select>
+    </div>
+
+    <div style="width: 180px;">
+      <select name="entityName" class="form-control-crm">
+        <option value="">All Modules</option>
+        <option value="Security" <%= entityName === 'Security' ? 'selected' : '' %>>Security / Auth</option>
+        <option value="Customer" <%= entityName === 'Customer' ? 'selected' : '' %>>Customer</option>
+        <option value="Lead" <%= entityName === 'Lead' ? 'selected' : '' %>>Lead</option>
+        <option value="Opportunity" <%= entityName === 'Opportunity' ? 'selected' : '' %>>Opportunity</option>
+        <option value="FollowUp" <%= entityName === 'FollowUp' ? 'selected' : '' %>>FollowUp</option>
+        <option value="Activity" <%= entityName === 'Activity' ? 'selected' : '' %>>Activity</option>
+        <option value="User" <%= entityName === 'User' ? 'selected' : '' %>>User Administration</option>
+      </select>
+    </div>
+
+    <div style="width: 180px;">
+      <select name="userId" class="form-control-crm">
+        <option value="">All Users</option>
+        <% users.forEach(u => { %>
+          <option value="<%= u.UserId %>" <%= userId == u.UserId ? 'selected' : '' %>><%= u.Name %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-crm btn-crm-secondary">
+      <i class="fa-solid fa-filter"></i>
+      <span>Filter</span>
+    </button>
+    <% if (action || entityName || userId) { %>
+      <a href="/audit" class="btn-crm btn-crm-secondary" title="Clear Filters">
+        <i class="fa-solid fa-xmark"></i>
+      </a>
+    <% } %>
+  </form>
+
+  <!-- Logs Table -->
+  <div style="overflow-x: auto;">
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>User</th>
+          <th>Action</th>
+          <th>Module</th>
+          <th>Record ID</th>
+          <th>Event Details</th>
+          <th>IP Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (logs && logs.length > 0) { %>
+          <% logs.forEach(l => { %>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);"><%= l.CreatedDate %></span></td>
+              <td>
+                <span style="font-size: 0.85rem; font-weight: 600; color: #fff;"><%= l.UserEmail || 'Anonymous' %></span>
+              </td>
+              <td>
+                <% 
+                  let actClass = 'badge-active';
+                  if (l.Action === 'Delete' || l.Action === 'Failed Login') actClass = 'badge-lost';
+                  if (l.Action === 'Update' || l.Action === 'Role Change') actClass = 'badge-contacted';
+                  if (l.Action === 'Lead Conversion') actClass = 'badge-converted';
+                  if (l.Action === 'Security Event') actClass = 'badge-new';
+                %>
+                <span class="badge-status <%= actClass %>"><%= l.Action %></span>
+              </td>
+              <td><span class="user-role-badge"><%= l.EntityName %></span></td>
+              <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--secondary);"><%= l.RecordId || '—' %></td>
+              <td style="font-size: 0.85rem; color: var(--text-muted); max-width: 320px;">
+                <%= l.Details || 'No additional details' %>
+              </td>
+              <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);"><%= l.IpAddress %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-dim);">
+              <i class="fa-solid fa-shield-halved" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+              No audit records matching query.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if (totalPages > 1) { %>
+    <div class="crm-pagination">
+      <div style="font-size: 0.85rem; color: var(--text-dim);">
+        Showing page <strong><%= currentPage %></strong> of <strong><%= totalPages %></strong> (<%= totalCount %> total)
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <% if (currentPage > 1) { %>
+          <a href="/audit?page=<%= currentPage - 1 %>&action=<%= action %>&entityName=<%= entityName %>&userId=<%= userId %>" class="btn-crm btn-crm-secondary btn-crm-sm">Previous</a>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+          <a href="/audit?page=<%= currentPage + 1 %>&action=<%= action %>&entityName=<%= entityName %>&userId=<%= userId %>" class="btn-crm btn-crm-secondary btn-crm-sm">Next</a>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</div>
