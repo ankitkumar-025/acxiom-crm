@@ -62,26 +62,48 @@ Users / API Clients
 
 ## 4. Installation & Startup
 
-### Prerequisites
-- Node.js (v18.0.0 or later, tested on v24.14.0)
-- npm (v9.0.0 or later)
+### One-Command Automated Setup (Recommended)
 
-### Quick Start
+Simply clone the repository and execute the setup script. It automatically checks runtime prerequisites, configures environment variables, downloads all required packages, seeds the database, verifies the 15-test acceptance suite, and launches the server.
+
+#### Linux / macOS / WSL / Git Bash
 ```bash
-# 1. Navigate to the project directory
+git clone https://github.com/ankitkumar-025/acxiom-crm.git
+cd acxiom-crm
+chmod +x setup.sh
+./setup.sh
+```
+
+#### Windows (Command Prompt or PowerShell)
+Double-click `setup.bat` or run:
+```cmd
+setup.bat
+```
+
+---
+
+### Manual Setup (Step-by-Step)
+
+```bash
+# 1. Clone & navigate
+git clone https://github.com/ankitkumar-025/acxiom-crm.git
 cd acxiom-crm
 
 # 2. Install dependencies
 npm install
 
-# 3. Run the automated acceptance test suite (All 15 scenarios)
+# 3. Seed database
+npm run seed
+
+# 4. Run automated acceptance test suite (All 15 verification scenarios)
 npm test
 
-# 4. Start the application
+# 5. Start the application
 npm start
 ```
 
 Open your browser at **`http://localhost:3000`**.
+
 
 ---
 

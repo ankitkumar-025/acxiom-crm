@@ -120,3 +120,7 @@ function seedDatabase() {
 module.exports = {
   seedDatabase
 };
+
+if (require.main === module) {
+  seedDatabase();
+}
